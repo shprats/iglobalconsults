@@ -1,0 +1,16 @@
+{
+  "recommendations": [
+    "Dart-Code.dart-code",
+    "Dart-Code.flutter",
+    "ms-python.python",
+    "ms-python.vscode-pylance",
+    "ckolkman.vscode-postgres",
+    "mtxr.sqltools",
+    "eamodio.gitlens",
+    "usernamehw.errorlens",
+    "PKief.material-icon-theme",
+    "esbenp.prettier-vscode",
+    "redhat.vscode-yaml"
+  ]
+}
+
