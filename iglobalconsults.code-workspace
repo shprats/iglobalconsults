@@ -1,0 +1,52 @@
+{
+  "folders": [
+    {
+      "path": ".",
+      "name": "GlobalHealth Connect"
+    },
+    {
+      "path": "./mobile",
+      "name": "Mobile App (Flutter)"
+    },
+    {
+      "path": "./backend",
+      "name": "Backend API (FastAPI)"
+    },
+    {
+      "path": "./web-dashboard",
+      "name": "Web Dashboard (React/Next.js)"
+    },
+    {
+      "path": "./database",
+      "name": "Database Schemas"
+    }
+  ],
+  "settings": {
+    "files.exclude": {
+      "**/__pycache__": true,
+      "**/*.pyc": true,
+      "**/.dart_tool": true,
+      "**/build": true,
+      "**/node_modules": true,
+      "**/.venv": true
+    },
+    "python.defaultInterpreterPath": "${workspaceFolder}/backend/venv/bin/python",
+    "python.analysis.extraPaths": [
+      "${workspaceFolder}/backend"
+    ],
+    "[python]": {
+      "editor.formatOnSave": true,
+      "editor.defaultFormatter": "ms-python.black-formatter"
+    },
+    "[dart]": {
+      "editor.formatOnSave": true,
+      "editor.defaultFormatter": "Dart-Code.dart-code"
+    },
+    "[json]": {
+      "editor.formatOnSave": true
+    },
+    "[yaml]": {
+      "editor.formatOnSave": true
+    }
+  }
+}
