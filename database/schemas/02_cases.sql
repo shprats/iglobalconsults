@@ -12,7 +12,7 @@ CREATE TABLE cases (
     urgency VARCHAR(20) NOT NULL CHECK (urgency IN ('critical', 'priority', 'routine')),
     status VARCHAR(50) DEFAULT 'draft' CHECK (status IN ('draft', 'submitted', 'assigned', 'in_consultation', 'completed', 'cancelled')),
     assigned_volunteer_id UUID REFERENCES users(id),
-    scheduled_consultation_id UUID REFERENCES consultations(id),
+    scheduled_consultation_id UUID,  -- Will add foreign key constraint after consultations table is created
     priority_score INTEGER DEFAULT 0,  -- Calculated based on urgency and time
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW(),

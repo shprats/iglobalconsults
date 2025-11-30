@@ -37,7 +37,9 @@ CREATE INDEX idx_consultations_volunteer ON consultations(volunteer_id);
 CREATE INDEX idx_consultations_patient ON consultations(patient_id);
 CREATE INDEX idx_consultations_scheduled ON consultations(scheduled_start);
 CREATE INDEX idx_consultations_status ON consultations(status);
-CREATE INDEX idx_consultations_upcoming ON consultations(scheduled_start) WHERE status = 'scheduled' AND scheduled_start > NOW();
+-- Note: Partial index with NOW() cannot be created directly
+-- Will be created as a regular index, filtering can be done in queries
+CREATE INDEX idx_consultations_upcoming ON consultations(scheduled_start, status) WHERE status = 'scheduled';
 
 -- Consultation Participants (for multi-party consultations if needed)
 CREATE TABLE consultation_participants (

@@ -33,7 +33,7 @@ CREATE TABLE appointment_slots (
     end_time TIMESTAMPTZ NOT NULL,
     timezone VARCHAR(50) NOT NULL,
     status VARCHAR(50) DEFAULT 'available' CHECK (status IN ('available', 'booked', 'cancelled', 'expired')),
-    consultation_id UUID REFERENCES consultations(id),
+    consultation_id UUID,  -- Will add foreign key constraint after consultations table is created
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW(),
     CHECK (end_time > start_time)
