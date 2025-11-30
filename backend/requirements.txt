@@ -22,8 +22,9 @@ bcrypt==4.1.0
 # File Upload (TUS Protocol)
 tuspy==0.2.3
 
-# Video (Agora.io)
-agora-token==2.0.0
+# Video (Agora.io) - Install manually when needed
+# agora-token package doesn't exist, use agora-python-sdk instead
+# pip install agora-python-sdk
 
 # Image Processing
 pillow==10.1.0
