@@ -31,4 +31,4 @@ class Case(Base):
     synced_at = Column(DateTime(timezone=True))
     is_offline = Column(Boolean, default=False, index=True)
     device_id = Column(String(255))
-    metadata = Column(JSON)
+    case_metadata = Column("metadata", JSON)  # Use case_metadata as attribute name, but "metadata" as column name
