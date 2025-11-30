@@ -168,7 +168,7 @@ async def login(
 
 @router.post("/refresh", response_model=Token)
 async def refresh_token_endpoint(
-    refresh_token: str,
+    token_data: TokenRefresh,
     db: Session = Depends(get_db)
 ):
     """Refresh access token using refresh token"""
@@ -178,7 +178,7 @@ async def refresh_token_endpoint(
         headers={"WWW-Authenticate": "Bearer"},
     )
     
-    payload = decode_token(refresh_token)
+    payload = decode_token(token_data.refresh_token)
     if payload is None:
         raise credentials_exception
     
