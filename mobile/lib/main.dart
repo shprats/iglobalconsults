@@ -4,10 +4,10 @@ import 'package:firebase_core/firebase_core.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Initialize Firebase
   await Firebase.initializeApp();
-  
+
   runApp(
     const ProviderScope(
       child: GlobalHealthConnectApp(),
@@ -37,26 +37,26 @@ class SplashScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(
+            Icon(
               Icons.medical_services,
               size: 80,
               color: Colors.blue,
             ),
-            const SizedBox(height: 20),
-            const Text(
+            SizedBox(height: 20),
+            Text(
               'GlobalHealth Connect',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 10),
-            const Text(
+            SizedBox(height: 10),
+            Text(
               'Connecting healthcare globally',
               style: TextStyle(
                 fontSize: 14,
@@ -69,4 +69,3 @@ class SplashScreen extends StatelessWidget {
     );
   }
 }
-

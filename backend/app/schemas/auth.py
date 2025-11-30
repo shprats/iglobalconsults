@@ -43,3 +43,7 @@ class TokenData(BaseModel):
     user_id: Optional[str] = None
     email: Optional[str] = None
 
+
+class TokenRefresh(BaseModel):
+    refresh_token: str
+
