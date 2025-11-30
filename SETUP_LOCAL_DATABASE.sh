@@ -12,14 +12,24 @@ echo ""
 if ! command -v psql &> /dev/null; then
     echo "❌ PostgreSQL not found. Installing..."
     echo ""
-    echo "Installing PostgreSQL via Homebrew..."
-    brew install postgresql@15
+    echo "Installing PostgreSQL via Homebrew (ARM64)..."
+    
+    # Detect architecture and use appropriate brew command
+    if [[ $(uname -m) == "arm64" ]]; then
+        # Apple Silicon - use native ARM
+        arch -arm64 brew install postgresql@15
+        BREW_CMD="arch -arm64 brew"
+    else
+        # Intel Mac
+        brew install postgresql@15
+        BREW_CMD="brew"
+    fi
     
     echo ""
     echo "✅ PostgreSQL installed!"
     echo ""
     echo "Starting PostgreSQL service..."
-    brew services start postgresql@15
+    $BREW_CMD services start postgresql@15
     
     # Wait a moment for service to start
     sleep 3
