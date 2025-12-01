@@ -32,7 +32,8 @@ class AuthService {
       );
 
       if (response.statusCode == 201) {
-        final userData = response.data['user'] as Map<String, dynamic>;
+        // Backend returns user object directly, not wrapped
+        final userData = response.data as Map<String, dynamic>;
         return User.fromJson(userData);
       }
       throw Exception('Registration failed');
