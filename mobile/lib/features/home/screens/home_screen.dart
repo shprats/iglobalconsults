@@ -4,6 +4,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../auth/providers/auth_provider.dart';
+import '../../cases/screens/cases_list_screen.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -51,16 +52,22 @@ class HomeScreen extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 48),
-            const Text(
-              'App is ready!',
-              style: TextStyle(fontSize: 18),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              'Next: Add case management screens',
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey,
+            ElevatedButton.icon(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const CasesListScreen(),
+                  ),
+                );
+              },
+              icon: const Icon(Icons.medical_information),
+              label: const Text('View Cases'),
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 32,
+                  vertical: 16,
+                ),
               ),
             ),
           ],
