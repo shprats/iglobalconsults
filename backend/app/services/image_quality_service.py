@@ -3,8 +3,15 @@ Image Quality Service
 Analyzes medical images for quality issues
 """
 
-import cv2
-import numpy as np
+try:
+    import cv2
+    import numpy as np
+    CV2_AVAILABLE = True
+except (ImportError, AttributeError):
+    CV2_AVAILABLE = False
+    cv2 = None
+    np = None
+
 from PIL import Image
 from typing import List, Tuple, Optional
 import io
@@ -24,6 +31,20 @@ class ImageQualityService:
         quality_score: 0.0 to 1.0 (1.0 = perfect quality)
         issues: List of quality issues found
         """
+        if not CV2_AVAILABLE:
+            logger.warning("OpenCV not available, using basic image analysis")
+            try:
+                img = Image.open(io.BytesIO(image_data))
+                width, height = img.size
+                score = 0.7 if width >= 512 and height >= 512 else 0.5
+                issues = ["OpenCV not available for detailed analysis"]
+                if width < 512 or height < 512:
+                    issues.append("Image resolution too low (minimum 512x512 recommended)")
+                return score, issues
+            except Exception as e:
+                logger.error(f"Error analyzing image: {e}")
+                return 0.0, [f"Error analyzing image: {str(e)}"]
+        
         issues = []
         score = 1.0
         

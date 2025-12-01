@@ -15,7 +15,7 @@ from app.core.security import (
     decode_token
 )
 from app.core.config import settings
-from app.schemas.auth import Token, UserCreate, UserResponse, TokenData
+from app.schemas.auth import Token, UserCreate, UserResponse, TokenData, TokenRefresh
 from app.repositories.user_repository import UserRepository
 
 router = APIRouter()
