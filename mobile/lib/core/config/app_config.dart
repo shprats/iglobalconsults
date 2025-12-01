@@ -1,35 +1,28 @@
+/// Application Configuration
+/// Centralized configuration for API endpoints and app settings
+
 class AppConfig {
   // API Configuration
-  static const String apiBaseUrl = String.fromEnvironment(
-    'API_BASE_URL',
-    defaultValue: 'https://api.globalhealthconnect.com',
-  );
+  static const String baseUrl = 'http://localhost:8000';
+  static const String apiVersion = 'v1';
+  static const String apiBaseUrl = '$baseUrl/api/$apiVersion';
   
-  // AWS S3 Configuration
-  static const String s3Bucket = String.fromEnvironment(
-    'S3_BUCKET',
-    defaultValue: 'globalhealth-connect-files',
-  );
-  
-  static const String s3Region = String.fromEnvironment(
-    'S3_REGION',
-    defaultValue: 'us-east-1',
-  );
-  
-  // Agora.io Configuration
-  static const String agoraAppId = String.fromEnvironment(
-    'AGORA_APP_ID',
-    defaultValue: '',
-  );
-  
-  // Feature Flags
-  static const bool enableOfflineMode = true;
-  static const bool enableImageQualityCheck = true;
-  static const int maxFileSizeMB = 100;
-  static const int consultationDurationMinutes = 10;
+  // Endpoints
+  static const String authBase = '$apiBaseUrl/auth';
+  static const String casesBase = '$apiBaseUrl/cases';
+  static const String consultationsBase = '$apiBaseUrl/consultations';
+  static const String filesBase = '$apiBaseUrl/files';
+  static const String schedulingBase = '$apiBaseUrl/scheduling';
   
   // Timeouts
-  static const Duration apiTimeout = Duration(seconds: 30);
-  static const Duration uploadTimeout = Duration(minutes: 10);
+  static const Duration connectTimeout = Duration(seconds: 30);
+  static const Duration receiveTimeout = Duration(seconds: 30);
+  
+  // File Upload
+  static const int maxFileSize = 10 * 1024 * 1024; // 10MB
+  static const List<String> allowedImageTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+  
+  // App Info
+  static const String appName = 'GlobalHealth Connect';
+  static const String appVersion = '1.0.0';
 }
-
