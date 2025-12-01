@@ -3,6 +3,7 @@
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/network/api_client.dart';
+import '../../auth/providers/auth_provider.dart';
 import '../services/case_service.dart';
 import '../../../core/models/case.dart';
 
