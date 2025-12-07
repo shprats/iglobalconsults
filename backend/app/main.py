@@ -7,7 +7,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from app.core.config import settings
-from app.api.v1 import auth, cases, consultations, files, scheduling
+from app.api.v1 import auth, cases, consultations, files, scheduling, notifications
 
 app = FastAPI(
     title="GlobalHealth Connect API",

@@ -3,12 +3,35 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'features/auth/screens/login_screen.dart';
 import 'features/auth/providers/auth_provider.dart';
 import 'features/auth/services/auth_service.dart';
 import 'features/home/screens/home_screen.dart';
+import 'features/notifications/services/notification_service.dart';
+import 'core/network/api_client.dart';
 
-void main() {
+// Background message handler (must be top-level function)
+@pragma('vm:entry-point')
+Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  print('Background message received: ${message.notification?.title}');
+  // Handle background notification
+}
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // Initialize Firebase
+  try {
+    await Firebase.initializeApp();
+    // Set up background message handler
+    FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+  } catch (e) {
+    print('Firebase initialization error: $e');
+    // Continue without Firebase if initialization fails
+  }
+  
   runApp(
     const ProviderScope(
       child: GlobalHealthConnectApp(),

@@ -13,6 +13,7 @@ class AppConfig {
   static const String consultationsBase = '$apiBaseUrl/consultations';
   static const String filesBase = '$apiBaseUrl/files';
   static const String schedulingBase = '$apiBaseUrl/scheduling';
+  static const String notificationsBase = '$apiBaseUrl/notifications';
   
   // Timeouts
   static const Duration connectTimeout = Duration(seconds: 30);

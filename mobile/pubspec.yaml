@@ -29,6 +29,11 @@ dependencies:
   # Video
   agora_rtc_engine: ^6.3.0
   
+  # Notifications
+  firebase_core: ^3.0.0
+  firebase_messaging: ^15.0.0
+  flutter_local_notifications: ^17.0.0
+  
   # File Handling
   image_picker: ^1.0.0
   file_picker: ^6.0.0

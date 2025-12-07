@@ -38,15 +38,25 @@ class AuthNotifier extends StateNotifier<User?> {
     }
   }
 
-  Future<bool> login(String email, String password) async {
-    try {
-      final result = await _authService.login(email: email, password: password);
-      state = result['user'] as User;
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
+         Future<bool> login(String email, String password) async {
+           try {
+             final result = await _authService.login(email: email, password: password);
+             state = result['user'] as User;
+             
+             // Initialize notifications after login
+             try {
+               final notificationService = NotificationService(ApiClient());
+               await notificationService.initialize();
+             } catch (e) {
+               print('Failed to initialize notifications: $e');
+               // Don't fail login if notifications fail
+             }
+             
+             return true;
+           } catch (e) {
+             return false;
+           }
+         }
 
   Future<bool> register({
     required String email,

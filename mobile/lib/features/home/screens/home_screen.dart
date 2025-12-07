@@ -9,6 +9,8 @@ import '../../cases/screens/available_cases_screen.dart';
 import '../../scheduling/screens/availability_list_screen.dart';
 import '../../consultations/screens/consultations_list_screen.dart';
 import '../../scheduling/screens/book_appointment_screen.dart';
+import '../../notifications/screens/notifications_screen.dart';
+import '../../notifications/providers/notification_provider.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -19,10 +21,54 @@ class HomeScreen extends ConsumerWidget {
     final isDoctor = user?.isDoctor ?? false;
     final isVolunteer = user?.isVolunteer ?? false;
 
+    final unreadCount = ref.watch(notificationsListProvider).unreadCount;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('GlobalHealth Connect'),
         actions: [
+          // Notifications icon with badge
+          Stack(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.notifications),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const NotificationsScreen(),
+                    ),
+                  );
+                },
+                tooltip: 'Notifications',
+              ),
+              if (unreadCount > 0)
+                Positioned(
+                  right: 8,
+                  top: 8,
+                  child: Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: const BoxDecoration(
+                      color: Colors.red,
+                      shape: BoxShape.circle,
+                    ),
+                    constraints: const BoxConstraints(
+                      minWidth: 16,
+                      minHeight: 16,
+                    ),
+                    child: Text(
+                      unreadCount > 9 ? '9+' : '$unreadCount',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+            ],
+          ),
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () async {
