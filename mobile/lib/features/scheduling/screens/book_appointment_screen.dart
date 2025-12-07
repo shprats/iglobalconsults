@@ -28,7 +28,7 @@ class _BookAppointmentScreenState extends ConsumerState<BookAppointmentScreen> {
     _scrollController.addListener(_onScroll);
     // Load cases when screen opens
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(casesListProvider.notifier).fetchCases(isRefresh: true);
+      // Cases will be loaded when dialog opens
     });
   }
 

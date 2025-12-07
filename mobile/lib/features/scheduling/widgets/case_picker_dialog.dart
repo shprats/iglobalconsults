@@ -75,7 +75,12 @@ class CasePickerDialog extends ConsumerWidget {
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
-                ref.read(casesListProvider.notifier).fetchCases(isRefresh: true);
+                // Cases are auto-loaded by the provider
+                Navigator.pop(context);
+                showDialog(
+                  context: context,
+                  builder: (context) => const CasePickerDialog(),
+                );
               },
               child: const Text('Retry'),
             ),
