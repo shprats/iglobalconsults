@@ -144,32 +144,30 @@ class _VideoCallScreenState extends ConsumerState<VideoCallScreen> {
   }
 
   Widget _buildVideoViews(VideoCallState state) {
-    return Column(
+    return Stack(
       children: [
-        // Remote video (full screen when no local video)
-        Expanded(
-          child: state.remoteUid != null
-              ? AgoraVideoView(
-                  controller: VideoViewController.remote(
-                    rtcEngine: state.engine!,
-                    canvas: VideoCanvas(uid: state.remoteUid),
-                    connection: RtcConnection(channelId: widget.channelName),
-                  ),
-                )
-              : const Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.videocam_off, size: 64, color: Colors.white54),
-                      SizedBox(height: 16),
-                      Text(
-                        'Waiting for participant...',
-                        style: TextStyle(color: Colors.white54),
-                      ),
-                    ],
-                  ),
+        // Remote video (full screen)
+        state.remoteUid != null && state.engine != null
+            ? AgoraVideoView(
+                controller: VideoViewController.remote(
+                  rtcEngine: state.engine!,
+                  canvas: VideoCanvas(uid: state.remoteUid),
+                  connection: RtcConnection(channelId: widget.channelName),
                 ),
-        ),
+              )
+            : const Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.videocam_off, size: 64, color: Colors.white54),
+                    SizedBox(height: 16),
+                    Text(
+                      'Waiting for participant...',
+                      style: TextStyle(color: Colors.white54),
+                    ),
+                  ],
+                ),
+              ),
         // Local video (picture-in-picture)
         if (_isVideoEnabled && state.engine != null)
           Positioned(
