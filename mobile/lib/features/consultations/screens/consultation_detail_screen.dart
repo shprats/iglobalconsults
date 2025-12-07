@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../providers/consultation_provider.dart';
+import '../services/consultation_service.dart';
 import 'consultation_notes_screen.dart';
+import '../../video/screens/video_call_screen.dart';
 
 class ConsultationDetailScreen extends ConsumerStatefulWidget {
   final String consultationId;
