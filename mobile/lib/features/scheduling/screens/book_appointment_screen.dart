@@ -6,6 +6,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../services/appointment_service.dart';
 import '../providers/appointment_provider.dart';
+import '../widgets/case_picker_dialog.dart';
+import '../../cases/providers/case_provider.dart';
+import '../../../core/models/case.dart';
 
 class BookAppointmentScreen extends ConsumerStatefulWidget {
   const BookAppointmentScreen({super.key});
@@ -17,11 +20,16 @@ class BookAppointmentScreen extends ConsumerStatefulWidget {
 
 class _BookAppointmentScreenState extends ConsumerState<BookAppointmentScreen> {
   final _scrollController = ScrollController();
+  MedicalCase? _selectedCase;
 
   @override
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
+    // Load cases when screen opens
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(casesListProvider.notifier).fetchCases(isRefresh: true);
+    });
   }
 
   @override
@@ -37,6 +45,19 @@ class _BookAppointmentScreenState extends ConsumerState<BookAppointmentScreen> {
     }
   }
 
+  Future<void> _selectCase() async {
+    final selectedCase = await showDialog<MedicalCase>(
+      context: context,
+      builder: (context) => const CasePickerDialog(),
+    );
+
+    if (selectedCase != null) {
+      setState(() {
+        _selectedCase = selectedCase;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final slotsState = ref.watch(availableSlotsProvider);
@@ -44,6 +65,14 @@ class _BookAppointmentScreenState extends ConsumerState<BookAppointmentScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Book Appointment'),
+        actions: [
+          if (_selectedCase != null)
+            IconButton(
+              icon: const Icon(Icons.check_circle, color: Colors.green),
+              onPressed: null,
+              tooltip: 'Case selected',
+            ),
+        ],
       ),
       body: RefreshIndicator(
         onRefresh: () async {
@@ -82,21 +111,55 @@ class _BookAppointmentScreenState extends ConsumerState<BookAppointmentScreen> {
       );
     }
 
-    if (state.slots.isEmpty) {
-      return const Center(
+    // Show case selection prompt if no case selected
+    if (_selectedCase == null) {
+      return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.calendar_today, size: 64, color: Colors.grey),
-            SizedBox(height: 16),
-            Text(
+            const Icon(Icons.medical_information, size: 64, color: Colors.grey),
+            const SizedBox(height: 16),
+            const Text(
+              'Select a Case First',
+              style: TextStyle(fontSize: 18, color: Colors.grey),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'Choose a case to book an appointment for',
+              style: TextStyle(color: Colors.grey),
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton.icon(
+              onPressed: _selectCase,
+              icon: const Icon(Icons.medical_information),
+              label: const Text('Select Case'),
+            ),
+          ],
+        ),
+      );
+    }
+
+    if (state.slots.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.calendar_today, size: 64, color: Colors.grey),
+            const SizedBox(height: 16),
+            const Text(
               'No available slots',
               style: TextStyle(fontSize: 18, color: Colors.grey),
             ),
-            SizedBox(height: 8),
-            Text(
+            const SizedBox(height: 8),
+            const Text(
               'Volunteers need to add their availability first',
               style: TextStyle(color: Colors.grey),
+            ),
+            const SizedBox(height: 24),
+            OutlinedButton.icon(
+              onPressed: _selectCase,
+              icon: const Icon(Icons.swap_horiz),
+              label: const Text('Change Case'),
             ),
           ],
         ),
@@ -133,6 +196,39 @@ class _BookAppointmentScreenState extends ConsumerState<BookAppointmentScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Selected case info
+            if (_selectedCase != null) ...[
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.blue.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.medical_information, size: 16, color: Colors.blue),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        _selectedCase!.title,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blue,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: _selectCase,
+                      child: const Text('Change', style: TextStyle(fontSize: 12)),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+            ],
             Text(
               DateFormat('MMM d, yyyy').format(startTime),
               style: const TextStyle(
@@ -147,10 +243,14 @@ class _BookAppointmentScreenState extends ConsumerState<BookAppointmentScreen> {
             ),
             const SizedBox(height: 12),
             ElevatedButton(
-              onPressed: () {
-                _showBookDialog(context, slot);
-              },
-              child: const Text('Book This Slot'),
+              onPressed: _selectedCase == null
+                  ? _selectCase
+                  : () {
+                      _showBookDialog(context, slot);
+                    },
+              child: Text(_selectedCase == null
+                  ? 'Select Case to Book'
+                  : 'Book This Slot'),
             ),
           ],
         ),
@@ -158,32 +258,106 @@ class _BookAppointmentScreenState extends ConsumerState<BookAppointmentScreen> {
     );
   }
 
-  void _showBookDialog(BuildContext context, Map<String, dynamic> slot) {
-    showDialog(
+  Future<void> _showBookDialog(
+      BuildContext context, Map<String, dynamic> slot) async {
+    if (_selectedCase == null) {
+      await _selectCase();
+      return;
+    }
+
+    final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Book Appointment'),
-        content: const Text('Select a case to book this appointment for:'),
+        title: const Text('Confirm Booking'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Book appointment for:'),
+            const SizedBox(height: 8),
+            Text(
+              _selectedCase!.title,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+              ),
+            ),
+            const SizedBox(height: 16),
+            const Text('Slot:'),
+            const SizedBox(height: 4),
+            Text(
+              '${DateFormat('MMM d, yyyy • h:mm a').format(DateTime.parse(slot['start_time'] as String))}',
+              style: const TextStyle(fontSize: 14),
+            ),
+          ],
+        ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.pop(context, false),
             child: const Text('Cancel'),
           ),
           ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              // TODO: Show case selection dialog
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Case selection coming soon'),
-                ),
-              );
-            },
-            child: const Text('Select Case'),
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Confirm Booking'),
           ),
         ],
       ),
     );
+
+    if (confirmed == true) {
+      await _bookAppointment(slot);
+    }
+  }
+
+  Future<void> _bookAppointment(Map<String, dynamic> slot) async {
+    if (_selectedCase == null) return;
+
+    // Show loading
+    if (!mounted) return;
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+
+    try {
+      final success = await ref.read(availableSlotsProvider.notifier).bookAppointment(
+            slotId: slot['id'] as String,
+            caseId: _selectedCase!.id,
+          );
+
+      if (!mounted) return;
+      Navigator.pop(context); // Close loading
+
+      if (success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Appointment booked successfully!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+        Navigator.pop(context); // Go back to previous screen
+      } else {
+        final error = ref.read(availableSlotsProvider).error;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: ${error ?? "Failed to book appointment"}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+      Navigator.pop(context); // Close loading
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 }
 
