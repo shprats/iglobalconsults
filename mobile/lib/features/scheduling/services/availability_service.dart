@@ -61,6 +61,21 @@ class AvailabilityService {
     }
   }
 
+  /// Delete an availability block
+  Future<void> deleteAvailabilityBlock(String blockId) async {
+    try {
+      final response = await _apiClient.delete(
+        '${AppConfig.schedulingBase}/availability/$blockId',
+      );
+
+      if (response.statusCode != 204) {
+        throw Exception('Failed to delete availability block');
+      }
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
   String _handleError(DioException error) {
     if (error.response != null) {
       final data = error.response?.data;

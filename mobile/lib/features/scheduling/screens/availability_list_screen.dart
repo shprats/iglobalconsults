@@ -106,18 +106,20 @@ class AvailabilityListScreen extends ConsumerWidget {
         itemCount: state.blocks.length,
         itemBuilder: (context, index) {
           final block = state.blocks[index];
-          return _buildAvailabilityCard(context, block);
+          return _buildAvailabilityCard(context, ref, block);
         },
       ),
     );
   }
 
-  Widget _buildAvailabilityCard(BuildContext context, Map<String, dynamic> block) {
+  Widget _buildAvailabilityCard(
+      BuildContext context, WidgetRef ref, Map<String, dynamic> block) {
     final startTime = DateTime.parse(block['start_time'] as String);
     final endTime = DateTime.parse(block['end_time'] as String);
     final duration = endTime.difference(startTime);
     final status = block['status'] as String? ?? 'active';
     final isRecurring = block['is_recurring'] as bool? ?? false;
+    final blockId = block['id'] as String;
 
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
@@ -216,6 +218,81 @@ class AvailabilityListScreen extends ConsumerWidget {
                 ),
               ),
             ],
+            const SizedBox(height: 12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton.icon(
+                  onPressed: () {
+                    // TODO: Navigate to edit screen
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Edit functionality coming soon'),
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.edit, size: 18),
+                  label: const Text('Edit'),
+                ),
+                const SizedBox(width: 8),
+                TextButton.icon(
+                  onPressed: () async {
+                    final confirmed = await showDialog<bool>(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: const Text('Delete Availability'),
+                        content: const Text(
+                          'Are you sure you want to delete this availability block?',
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context, false),
+                            child: const Text('Cancel'),
+                          ),
+                          TextButton(
+                            onPressed: () => Navigator.pop(context, true),
+                            style: TextButton.styleFrom(
+                              foregroundColor: Colors.red,
+                            ),
+                            child: const Text('Delete'),
+                          ),
+                        ],
+                      ),
+                    );
+
+                    if (confirmed == true) {
+                      final success = await ref
+                          .read(availabilityBlocksProvider.notifier)
+                          .deleteAvailabilityBlock(blockId);
+
+                      if (context.mounted) {
+                        if (success) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Availability deleted'),
+                            ),
+                          );
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                'Error: ${ref.read(availabilityBlocksProvider).error ?? "Failed to delete"}',
+                              ),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        }
+                      }
+                    }
+                  },
+                  icon: const Icon(Icons.delete, size: 18),
+                  label: const Text('Delete'),
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.red,
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
       ),

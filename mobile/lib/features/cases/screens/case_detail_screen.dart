@@ -7,6 +7,8 @@ import '../../../core/models/case.dart';
 import '../services/case_service.dart';
 import '../providers/case_provider.dart';
 import '../../../core/network/api_client.dart';
+import '../../files/services/file_service.dart';
+import '../../files/screens/file_upload_screen.dart';
 
 class CaseDetailScreen extends ConsumerStatefulWidget {
   final String caseId;
@@ -157,6 +159,23 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
       appBar: AppBar(
         title: const Text('Case Details'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.upload_file),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => FileUploadScreen(
+                    caseId: widget.caseId,
+                  ),
+                ),
+              ).then((_) {
+                // Refresh case details if needed
+                _loadCase();
+              });
+            },
+            tooltip: 'Upload File',
+          ),
           IconButton(
             icon: const Icon(Icons.delete),
             onPressed: _deleteCase,

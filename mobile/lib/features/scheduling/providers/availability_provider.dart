@@ -91,5 +91,17 @@ class AvailabilityNotifier extends StateNotifier<AvailabilityState> {
       return false;
     }
   }
+
+  Future<bool> deleteAvailabilityBlock(String blockId) async {
+    try {
+      await _availabilityService.deleteAvailabilityBlock(blockId);
+      // Reload blocks after deleting
+      await loadAvailabilityBlocks();
+      return true;
+    } catch (e) {
+      state = state.copyWith(error: e.toString());
+      return false;
+    }
+  }
 }
 

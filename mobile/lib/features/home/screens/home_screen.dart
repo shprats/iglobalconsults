@@ -5,7 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../cases/screens/cases_list_screen.dart';
+import '../../cases/screens/available_cases_screen.dart';
 import '../../scheduling/screens/availability_list_screen.dart';
+import '../../consultations/screens/consultations_list_screen.dart';
+import '../../scheduling/screens/book_appointment_screen.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -76,17 +79,36 @@ class HomeScreen extends ConsumerWidget {
                 ),
               ),
               const SizedBox(height: 16),
-              OutlinedButton.icon(
+              ElevatedButton.icon(
                 onPressed: () {
-                  // TODO: Navigate to appointment booking screen
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Appointment booking coming soon'),
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const BookAppointmentScreen(),
                     ),
                   );
                 },
                 icon: const Icon(Icons.calendar_today),
                 label: const Text('Book Appointment'),
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 32,
+                    vertical: 16,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              OutlinedButton.icon(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ConsultationsListScreen(),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.video_call),
+                label: const Text('My Consultations'),
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 32,
@@ -115,18 +137,18 @@ class HomeScreen extends ConsumerWidget {
                 ),
               ),
               const SizedBox(height: 16),
-              OutlinedButton.icon(
+              ElevatedButton.icon(
                 onPressed: () {
-                  // TODO: Navigate to available cases screen
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Available cases coming soon'),
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const AvailableCasesScreen(),
                     ),
                   );
                 },
                 icon: const Icon(Icons.medical_information),
                 label: const Text('View Available Cases'),
-                style: OutlinedButton.styleFrom(
+                style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 32,
                     vertical: 16,
@@ -136,10 +158,10 @@ class HomeScreen extends ConsumerWidget {
               const SizedBox(height: 16),
               OutlinedButton.icon(
                 onPressed: () {
-                  // TODO: Navigate to consultations screen
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('My consultations coming soon'),
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ConsultationsListScreen(),
                     ),
                   );
                 },
