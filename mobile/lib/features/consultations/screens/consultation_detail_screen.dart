@@ -7,6 +7,10 @@ import 'package:intl/intl.dart';
 import '../providers/consultation_provider.dart';
 import '../services/consultation_service.dart';
 import 'consultation_notes_screen.dart';
+import '../../video_call/screens/video_call_screen.dart';
+import '../../../core/config/app_config.dart';
+import '../../auth/providers/auth_provider.dart';
+import '../../video_call/screens/video_call_screen.dart';
 import '../../video/screens/video_call_screen.dart';
 
 class ConsultationDetailScreen extends ConsumerStatefulWidget {
@@ -71,24 +75,64 @@ class _ConsultationDetailScreenState
 
     if (confirmed != true) return;
 
-    final success = await ref
-        .read(consultationsListProvider.notifier)
-        .startConsultation(widget.consultationId);
-
+    // Show loading
     if (!mounted) return;
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
 
-    if (success) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Consultation started')),
-      );
-      await _loadConsultation();
-      // TODO: Navigate to video call screen
-    } else {
+    try {
+      // Start consultation and get Agora token
+      final service = ref.read(consultationServiceProvider);
+      final startResponse = await service.startConsultation(widget.consultationId);
+
+      if (!mounted) return;
+      Navigator.pop(context); // Close loading dialog
+
+      // Get current user for user ID
+      final currentUser = ref.read(currentUserProvider);
+      if (currentUser == null) {
+        throw Exception('User not found');
+      }
+
+      // Extract Agora details from response
+      final agoraAppId = startResponse['agora_app_id'] as String? ?? '';
+      final agoraToken = startResponse['agora_token'] as String?;
+      final channelName = startResponse['agora_channel_name'] as String?;
+
+      if (agoraToken == null || channelName == null || agoraAppId.isEmpty) {
+        throw Exception('Agora credentials not found in response');
+      }
+
+      // Generate user ID from user ID string (use hash of UUID)
+      // Agora requires numeric UID, so we'll use a hash of the user ID
+      final userId = currentUser.id.hashCode.abs() % 2147483647; // Max int32
+
+      // Navigate to video call screen
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => VideoCallScreen(
+              consultationId: widget.consultationId,
+              channelName: channelName,
+              agoraToken: agoraToken,
+              agoraAppId: agoraAppId,
+              userId: userId,
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+      Navigator.pop(context); // Close loading dialog if still open
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            'Error: ${ref.read(consultationsListProvider).error ?? "Failed to start"}',
-          ),
+          content: Text('Error starting consultation: $e'),
           backgroundColor: Colors.red,
         ),
       );
@@ -225,28 +269,7 @@ class _ConsultationDetailScreenState
             // Actions
             if (status == 'scheduled')
               ElevatedButton.icon(
-                onPressed: () async {
-                  // Start consultation and navigate to video call
-                  final success = await ref
-                      .read(consultationsListProvider.notifier)
-                      .startConsultation(widget.consultationId);
-
-                  if (!mounted) return;
-
-                  if (success) {
-                    // Reload consultation to get Agora credentials
-                    await _loadConsultation();
-                    
-                    // Navigate to video call
-                    if (_consultation != null) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => VideoCallScreen(
-                            consultationId: widget.consultationId,
-                            agoraToken: _consultation!['agora_token'] as String?,
-                            channelName: _consultation!['agora_channel_name'] as String?,
-                            appId: _consultation!['agora_app_id'] as String?,
+                onPressed: _handleStart,
                           ),
                         ),
                       ).then((_) => _loadConsultation());

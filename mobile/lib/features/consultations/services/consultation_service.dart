@@ -61,7 +61,7 @@ class ConsultationService {
     }
   }
 
-  /// Start a consultation
+  /// Start a consultation and get Agora token
   Future<Map<String, dynamic>> startConsultation(String consultationId) async {
     try {
       final response = await _apiClient.post(
@@ -69,7 +69,9 @@ class ConsultationService {
       );
 
       if (response.statusCode == 200) {
-        return response.data as Map<String, dynamic>;
+        final data = response.data as Map<String, dynamic>;
+        // The backend returns agora_token and agora_channel_name in the response
+        return data;
       }
       throw Exception('Failed to start consultation');
     } on DioException catch (e) {
