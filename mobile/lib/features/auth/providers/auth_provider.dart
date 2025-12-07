@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/network/api_client.dart';
 import '../services/auth_service.dart';
 import '../../../core/models/user.dart';
+import '../../notifications/services/notification_service.dart';
 
 final apiClientProvider = Provider<ApiClient>((ref) {
   return ApiClient();

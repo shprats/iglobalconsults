@@ -21,6 +21,10 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
+    // Ensure notifications are loaded when screen opens
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(notificationsListProvider.notifier).ensureLoaded();
+    });
   }
 
   @override
@@ -64,16 +68,6 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
       default:
         return Colors.grey;
     }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _scrollController.addListener(_onScroll);
-    // Ensure notifications are loaded when screen opens
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(notificationsListProvider.notifier).ensureLoaded();
-    });
   }
 
   @override
