@@ -50,7 +50,10 @@ class NotificationRepository:
         stmt = select(Notification).where(Notification.user_id == user_uuid)
         
         if is_read is not None:
-            stmt = stmt.where(Notification.is_read == is_read)
+            if is_read:
+                stmt = stmt.where(Notification.read_at.isnot(None))
+            else:
+                stmt = stmt.where(Notification.read_at.is_(None))
         
         # Get total count
         count_stmt = select(func.count()).select_from(

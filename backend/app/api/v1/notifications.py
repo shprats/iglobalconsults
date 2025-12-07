@@ -50,9 +50,11 @@ async def list_notifications(
             {
                 "id": str(n.id),
                 "user_id": str(n.user_id),
+                "title": n.title,
                 "message": n.message,
                 "type": n.type,
                 "is_read": n.is_read,
+                "data": n.data,
                 "created_at": n.created_at.isoformat(),
             }
             for n in notifications

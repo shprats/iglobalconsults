@@ -59,9 +59,17 @@ class NotificationsState {
 
 class NotificationsNotifier extends StateNotifier<NotificationsState> {
   final NotificationService _service;
+  bool _hasLoaded = false;
 
   NotificationsNotifier(this._service) : super(NotificationsState()) {
-    loadNotifications();
+    // Don't auto-load - wait for screen to load
+  }
+  
+  void ensureLoaded() {
+    if (!_hasLoaded) {
+      _hasLoaded = true;
+      loadNotifications();
+    }
   }
 
   Future<void> loadNotifications({bool refresh = false}) async {

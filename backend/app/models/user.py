@@ -33,4 +33,7 @@ class User(Base):
     email_verification_token = Column(String(255))
     password_reset_token = Column(String(255))
     password_reset_expires_at = Column(DateTime(timezone=True))
+    
+    # Relationships
+    notifications = relationship("Notification", back_populates="user")
 

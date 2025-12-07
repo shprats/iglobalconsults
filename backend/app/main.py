@@ -39,6 +39,7 @@ app.include_router(cases.router, prefix="/api/v1/cases", tags=["Cases"])
 app.include_router(consultations.router, prefix="/api/v1/consultations", tags=["Consultations"])
 app.include_router(files.router, prefix="/api/v1/files", tags=["Files"])
 app.include_router(scheduling.router, prefix="/api/v1/scheduling", tags=["Scheduling"])
+app.include_router(notifications.router, prefix="/api/v1/notifications", tags=["Notifications"])
 
 
 @app.get("/")

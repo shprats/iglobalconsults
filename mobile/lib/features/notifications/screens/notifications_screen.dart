@@ -67,6 +67,16 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+    // Ensure notifications are loaded when screen opens
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(notificationsListProvider.notifier).ensureLoaded();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final notificationsState = ref.watch(notificationsListProvider);
 
