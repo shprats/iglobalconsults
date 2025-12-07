@@ -61,6 +61,38 @@ class AvailabilityService {
     }
   }
 
+  /// Update an availability block
+  Future<Map<String, dynamic>> updateAvailabilityBlock({
+    required String blockId,
+    required DateTime startTime,
+    required DateTime endTime,
+    required String timezone,
+    int slotDurationMinutes = 10,
+    bool isRecurring = false,
+    Map<String, dynamic>? recurrencePattern,
+  }) async {
+    try {
+      final response = await _apiClient.put(
+        '${AppConfig.schedulingBase}/availability/$blockId',
+        data: {
+          'start_time': startTime.toIso8601String(),
+          'end_time': endTime.toIso8601String(),
+          'timezone': timezone,
+          'slot_duration_minutes': slotDurationMinutes,
+          'is_recurring': isRecurring,
+          if (recurrencePattern != null) 'recurrence_pattern': recurrencePattern,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return response.data as Map<String, dynamic>;
+      }
+      throw Exception('Failed to update availability block');
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
   /// Delete an availability block
   Future<void> deleteAvailabilityBlock(String blockId) async {
     try {
