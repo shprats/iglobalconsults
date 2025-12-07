@@ -111,6 +111,63 @@ async def list_availability_blocks(
     ]
 
 
+@router.put("/availability/{block_id}", response_model=AvailabilityBlockResponse)
+async def update_availability_block(
+    block_id: str,
+    block_update: AvailabilityBlockCreate,
+    current_user: UserResponse = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Update an availability block"""
+    if current_user.role != 'volunteer_physician':
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only volunteers can update availability blocks"
+        )
+    
+    repo = SchedulingRepository(db)
+    block = repo.get_availability_block(block_id)
+    
+    if not block:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Availability block not found"
+        )
+    
+    # Verify ownership
+    if str(block.volunteer_id) != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You can only update your own availability blocks"
+        )
+    
+    # Update block
+    update_data = {
+        "start_time": block_update.start_time,
+        "end_time": block_update.end_time,
+        "timezone": block_update.timezone,
+        "slot_duration_minutes": block_update.slot_duration_minutes,
+        "is_recurring": block_update.is_recurring,
+        "recurrence_pattern": block_update.recurrence_pattern,
+    }
+    
+    updated_block = repo.update_availability_block(block, update_data)
+    
+    return AvailabilityBlockResponse(
+        id=str(updated_block.id),
+        volunteer_id=str(updated_block.volunteer_id),
+        start_time=updated_block.start_time,
+        end_time=updated_block.end_time,
+        timezone=updated_block.timezone,
+        slot_duration_minutes=updated_block.slot_duration_minutes,
+        is_recurring=updated_block.is_recurring,
+        recurrence_pattern=updated_block.recurrence_pattern,
+        status=updated_block.status,
+        created_at=updated_block.created_at,
+        updated_at=updated_block.updated_at
+    )
+
+
 @router.get("/slots", response_model=AppointmentSlotListResponse)
 async def get_available_slots(
     volunteer_id: Optional[str] = Query(None),

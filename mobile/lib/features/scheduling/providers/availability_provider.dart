@@ -92,6 +92,35 @@ class AvailabilityNotifier extends StateNotifier<AvailabilityState> {
     }
   }
 
+  Future<bool> updateAvailabilityBlock({
+    required String blockId,
+    required DateTime startTime,
+    required DateTime endTime,
+    required String timezone,
+    int slotDurationMinutes = 10,
+    bool isRecurring = false,
+    Map<String, dynamic>? recurrencePattern,
+  }) async {
+    try {
+      await _availabilityService.updateAvailabilityBlock(
+        blockId: blockId,
+        startTime: startTime,
+        endTime: endTime,
+        timezone: timezone,
+        slotDurationMinutes: slotDurationMinutes,
+        isRecurring: isRecurring,
+        recurrencePattern: recurrencePattern,
+      );
+
+      // Reload blocks after updating
+      await loadAvailabilityBlocks();
+      return true;
+    } catch (e) {
+      state = state.copyWith(error: e.toString());
+      return false;
+    }
+  }
+
   Future<bool> deleteAvailabilityBlock(String blockId) async {
     try {
       await _availabilityService.deleteAvailabilityBlock(blockId);

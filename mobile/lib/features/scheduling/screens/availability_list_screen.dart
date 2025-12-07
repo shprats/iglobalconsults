@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../providers/availability_provider.dart';
 import 'add_availability_screen.dart';
+import 'edit_availability_screen.dart';
 
 class AvailabilityListScreen extends ConsumerWidget {
   const AvailabilityListScreen({super.key});
@@ -224,12 +225,17 @@ class AvailabilityListScreen extends ConsumerWidget {
               children: [
                 TextButton.icon(
                   onPressed: () {
-                    // TODO: Navigate to edit screen
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Edit functionality coming soon'),
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => EditAvailabilityScreen(
+                          availabilityBlock: block,
+                        ),
                       ),
-                    );
+                    ).then((_) {
+                      // Refresh list after editing
+                      ref.read(availabilityBlocksProvider.notifier).loadAvailabilityBlocks();
+                    });
                   },
                   icon: const Icon(Icons.edit, size: 18),
                   label: const Text('Edit'),
