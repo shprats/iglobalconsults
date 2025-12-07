@@ -287,6 +287,77 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
                 Icons.favorite,
               ),
             const SizedBox(height: 16),
+            // Files Section
+            FutureBuilder<List<Map<String, dynamic>>>(
+              future: _loadCaseFiles(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Card(
+                    child: Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Center(child: CircularProgressIndicator()),
+                    ),
+                  );
+                }
+
+                final files = snapshot.data ?? [];
+
+                if (files.isEmpty) {
+                  return Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Files',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          const Text(
+                            'No files uploaded yet',
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }
+
+                return Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Files',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        ...files.map((file) => ListTile(
+                              leading: const Icon(Icons.image),
+                              title: Text(file['file_name'] as String? ?? 'Unknown'),
+                              subtitle: Text(
+                                '${(file['file_size'] as int? ?? 0) ~/ 1024} KB',
+                              ),
+                              trailing: file['upload_status'] == 'completed'
+                                  ? const Icon(Icons.check_circle, color: Colors.green)
+                                  : const Icon(Icons.upload, color: Colors.orange),
+                            )),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: 16),
             // Metadata
             Card(
               child: Padding(
@@ -317,6 +388,15 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
         ),
       ),
     );
+  }
+
+  Future<List<Map<String, dynamic>>> _loadCaseFiles() async {
+    try {
+      final fileService = FileService(ApiClient());
+      return await fileService.getCaseFiles(widget.caseId);
+    } catch (e) {
+      return [];
+    }
   }
 
   Widget _buildSection(String title, String content, IconData icon) {
