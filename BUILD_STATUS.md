@@ -58,10 +58,12 @@
    - ✅ View consultation details
    - ✅ Filter consultations by status
    - ✅ See diagnosis and treatment plans
+   - ✅ Start video consultations
+   - ✅ Join video calls (Agora.io)
+   - ✅ End consultations from video call
 
 #### ⏳ **Pending Features:**
 - Case selection when booking appointments
-- Video call integration (Agora.io)
 - Push notifications
 - Offline mode support
 
@@ -95,7 +97,9 @@
    - ✅ View all consultations
    - ✅ View consultation details
    - ✅ Start consultations
-   - ✅ End consultations
+   - ✅ Join video calls (Agora.io)
+   - ✅ Video call controls (mute, video, speaker)
+   - ✅ End consultations from video call
    - ✅ Add diagnosis
    - ✅ Add treatment plan
    - ✅ Add volunteer notes
@@ -135,6 +139,7 @@
 - ✅ Consultations List Screen
 - ✅ Consultation Detail Screen
 - ✅ Consultation Notes Screen
+- ✅ Video Call Screen (Agora.io)
 
 #### File Management
 - ✅ File Upload Screen
@@ -166,7 +171,6 @@
 - ✅ Error state handling
 
 ### ⏳ **In Progress / Pending:**
-- Video call integration (Agora.io SDK)
 - Push notifications (Firebase Cloud Messaging)
 - Offline queue and sync
 - Image viewer component
@@ -203,7 +207,6 @@
 - ✅ Availability/Scheduling API
 
 ### ⏳ **Pending Integration:**
-- Video call token generation (Agora.io)
 - Push notification service
 - Image quality analysis results display
 
@@ -220,23 +223,18 @@
 | File Upload | ✅ Complete | 100% |
 | Appointment Booking | ✅ Complete | 90% (case selection pending) |
 | Role-Based Navigation | ✅ Complete | 100% |
-| Video Calls | ⏳ Pending | 0% |
+| Video Calls | ✅ Complete | 100% |
 | Push Notifications | ⏳ Pending | 0% |
 | Offline Support | ⏳ Pending | 0% |
 
-**Overall Completion:** ~85% of core features
+**Overall Completion:** ~90% of core features
 
 ---
 
 ## 🚀 Next Steps
 
 ### Priority 1: Core Enhancements
-1. **Video Call Integration**
-   - Integrate Agora.io SDK
-   - Build video call screen
-   - Connect to consultation start/end flow
-
-2. **Edit Availability**
+1. **Edit Availability**
    - Complete edit functionality
    - Add edit endpoint to backend if needed
 
@@ -284,6 +282,7 @@
 - ✅ Role-based navigation
 
 ### ⏳ **Needs Testing:**
+- Video call flow (requires Agora.io credentials)
 - Case acceptance flow (volunteer)
 - Consultation start/end flow
 - Appointment booking flow
@@ -298,7 +297,7 @@
 - All backend endpoints are implemented and tested
 - Flutter app is fully connected to backend API
 - All priority features from the original requirements are complete
-- App is ready for video call integration
+- ✅ Video call integration complete (Agora.io SDK)
 - UI/UX follows Material Design 3 guidelines
 - Error handling is comprehensive throughout the app
 
@@ -306,4 +305,4 @@
 
 **Last Build:** January 2025  
 **Version:** 1.0.0-alpha  
-**Status:** ✅ Ready for Video Call Integration
+**Status:** ✅ Video Call Integration Complete - Ready for Testing
