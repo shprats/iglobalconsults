@@ -66,8 +66,12 @@ class Settings(BaseSettings):
     TUS_MAX_FILE_SIZE: int = 100 * 1024 * 1024  # 100MB
     TUS_UPLOAD_EXPIRATION: int = 86400  # 24 hours
     
-    # Notifications
-    FIREBASE_CREDENTIALS_PATH: str = ""
+    # Notifications - Firebase Cloud Messaging
+    FIREBASE_PROJECT_ID: str = ""
+    FIREBASE_SERVER_KEY: str = ""  # Legacy API key (optional)
+    FIREBASE_CREDENTIALS_PATH: str = ""  # Service account JSON path (recommended)
+    
+    # AWS (for future email/SMS)
     AWS_SNS_REGION: str = "us-east-1"
     AWS_SES_REGION: str = "us-east-1"
     
