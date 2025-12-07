@@ -223,7 +223,43 @@ class _ConsultationDetailScreenState
             // Actions
             if (status == 'scheduled')
               ElevatedButton.icon(
-                onPressed: _handleStart,
+                onPressed: () async {
+                  // Start consultation and navigate to video call
+                  final success = await ref
+                      .read(consultationsListProvider.notifier)
+                      .startConsultation(widget.consultationId);
+
+                  if (!mounted) return;
+
+                  if (success) {
+                    // Reload consultation to get Agora credentials
+                    await _loadConsultation();
+                    
+                    // Navigate to video call
+                    if (_consultation != null) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => VideoCallScreen(
+                            consultationId: widget.consultationId,
+                            agoraToken: _consultation!['agora_token'] as String?,
+                            channelName: _consultation!['agora_channel_name'] as String?,
+                            appId: _consultation!['agora_app_id'] as String?,
+                          ),
+                        ),
+                      ).then((_) => _loadConsultation());
+                    }
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          'Error: ${ref.read(consultationsListProvider).error ?? "Failed to start"}',
+                        ),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                },
                 icon: const Icon(Icons.video_call),
                 label: const Text('Start Consultation'),
                 style: ElevatedButton.styleFrom(
@@ -231,7 +267,34 @@ class _ConsultationDetailScreenState
                   minimumSize: const Size(double.infinity, 0),
                 ),
               ),
-            if (status == 'in_progress')
+            if (status == 'in_progress') ...[
+              ElevatedButton.icon(
+                onPressed: () {
+                  // Join ongoing video call
+                  if (_consultation != null) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => VideoCallScreen(
+                          consultationId: widget.consultationId,
+                          agoraToken: _consultation!['agora_token'] as String?,
+                          channelName: _consultation!['agora_channel_name'] as String?,
+                          appId: _consultation!['agora_app_id'] as String?,
+                        ),
+                      ),
+                    ).then((_) => _loadConsultation());
+                  }
+                },
+                icon: const Icon(Icons.video_call),
+                label: const Text('Join Call'),
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  minimumSize: const Size(double.infinity, 0),
+                  backgroundColor: Colors.green,
+                  foregroundColor: Colors.white,
+                ),
+              ),
+              const SizedBox(height: 12),
               ElevatedButton.icon(
                 onPressed: _handleEnd,
                 icon: const Icon(Icons.stop),
@@ -243,6 +306,7 @@ class _ConsultationDetailScreenState
                   foregroundColor: Colors.white,
                 ),
               ),
+            ],
             if (status == 'completed' || status == 'in_progress')
               OutlinedButton.icon(
                 onPressed: () {
