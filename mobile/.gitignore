@@ -77,6 +77,10 @@ app.*.map.json
 # Web
 /web/
 
+# Firebase configuration files (add these manually after Firebase setup)
+# ios/Runner/GoogleService-Info.plist
+# android/app/google-services.json
+
 # Exceptions to above rules.
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
 !/dev/ci/**/Gemfile.lock

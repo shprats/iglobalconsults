@@ -50,3 +50,8 @@ logs/
 # OS
 .DS_Store
 
+# Firebase credentials (NEVER commit these!)
+firebase-service-account.json
+*firebase*.json
+GoogleService-Info.plist
+

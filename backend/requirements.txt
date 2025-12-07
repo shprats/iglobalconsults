@@ -50,3 +50,6 @@ aiohttp==3.9.0
 python-dotenv==1.0.0
 email-validator==2.1.0
 
+# Firebase Cloud Messaging
+firebase-admin>=6.0.0
+
